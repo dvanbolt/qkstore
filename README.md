@@ -1,1 +1,2 @@
-TODO
+A single file columnar storage script that I use for projects where Pandas and PyArrow had too much overhead.  
+Uses ilj's orjson (or normal json) library to serialize and deserialize faster than pure python.  
