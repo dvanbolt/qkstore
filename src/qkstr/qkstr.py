@@ -81,7 +81,7 @@ def dump(data:Iterable[dict[str|int,str|int|float|bool|None]],path:Path|str,keys
     with open(path,file_mode.write) as f:
         f.write(data_str)
 
-def load(path:Path|str,keys:Optional[list[str|int]] = None,types:Optional[dict[str,str]] = None,orjson:bool=True)->list[dict[str|int,str|int|float|bool|None]]:
+def load(path:Path|str,keys:Optional[list[str|int]] = None,types:Optional[dict[str,str]] = None,rows:bool=False,row_type:type=dict,include_header:bool=True,orjson:bool=True)->list[dict[str|int,str|int|float|bool|None]]:
     if orjson:
         file_mode = _FM('orjson','rb','wb',b'\n',b'')        
     else:
@@ -117,4 +117,17 @@ def load(path:Path|str,keys:Optional[list[str|int]] = None,types:Optional[dict[s
                 values.append(key_values)
                 if not objects:
                     objects = len(key_values)
-        return [{k:values[ki][oi] for (ki,k) in enumerate(keys)} for oi in range(objects)]
+        if rows:
+            if row_type==dict:
+                return [{k:values[ki][oi] for (ki,k) in enumerate(keys)} for oi in range(objects)]
+            elif row_type in (tuple,list):
+                kl = range(len(keys))
+                ret = [row_type([values[ki][oi] for ki in kl]) for oi in range(objects)]
+                if include_header:
+                    ret.insert(0,row_type(keys))
+                return ret
+        else:
+            return {k:values[ki] for (ki,k) in enumerate(keys)}
+
+
+        return values

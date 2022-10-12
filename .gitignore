@@ -13,6 +13,7 @@
 *.blob
 dist/
 env/
+test/
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
